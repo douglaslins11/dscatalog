@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.lins.dscatalog.dto.CategoryDTO;
+import br.com.lins.dscatalog.exception.EntityNotFoundException;
 import br.com.lins.dscatalog.model.Category;
 import br.com.lins.dscatalog.repositories.CategoryRepository;
 
@@ -19,5 +20,9 @@ public class CategoryService {
 	public List<CategoryDTO> findall(){
 		List<Category> categories = repository.findAll();
 		return categories.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
+	}
+
+	public CategoryDTO findById(Long id) {
+		return new CategoryDTO(repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found")));
 	}
 }
