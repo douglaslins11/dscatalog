@@ -10,20 +10,24 @@ import br.com.lins.dscatalog.dto.CategoryDTO;
 import br.com.lins.dscatalog.exception.EntityNotFoundException;
 import br.com.lins.dscatalog.model.Category;
 import br.com.lins.dscatalog.repositories.CategoryRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoryService {
 	
 	@Autowired
 	private CategoryRepository repository;
-	
+
+	@Transactional(readOnly = true)
 	public List<CategoryDTO> findall(){
 		List<Category> categories = repository.findAll();
 		return categories.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
 	}
 
+	@Transactional(readOnly = true)
 	public CategoryDTO findById(Long id) {
-		return new CategoryDTO(repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found")));
+		return new CategoryDTO(repository.findById(id)
+										 .orElseThrow(() -> new EntityNotFoundException("Entity not found")));
 	}
 
 	public CategoryDTO insert(CategoryDTO categoryDTO) {
