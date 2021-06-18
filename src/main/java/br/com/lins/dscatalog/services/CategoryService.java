@@ -1,18 +1,16 @@
 package br.com.lins.dscatalog.services;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import br.com.lins.dscatalog.exception.DatabaseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.stereotype.Service;
-
 import br.com.lins.dscatalog.dto.CategoryDTO;
+import br.com.lins.dscatalog.exception.DatabaseException;
 import br.com.lins.dscatalog.exception.ResourceNotFoundException;
 import br.com.lins.dscatalog.model.Category;
 import br.com.lins.dscatalog.repositories.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
@@ -24,9 +22,9 @@ public class CategoryService {
 	private CategoryRepository repository;
 
 	@Transactional(readOnly = true)
-	public List<CategoryDTO> findall(){
-		List<Category> categories = repository.findAll();
-		return categories.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
+	public Page<CategoryDTO> findAllPaged(PageRequest pageRequest){
+		Page<Category> categories = repository.findAll(pageRequest);
+		return categories.map(x -> new CategoryDTO(x));
 	}
 
 	@Transactional(readOnly = true)

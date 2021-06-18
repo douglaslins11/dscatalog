@@ -1,15 +1,16 @@
 package br.com.lins.dscatalog.controller;
 
-import java.net.URI;
-import java.util.List;
-
+import br.com.lins.dscatalog.dto.CategoryDTO;
+import br.com.lins.dscatalog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.lins.dscatalog.dto.CategoryDTO;
-import br.com.lins.dscatalog.services.CategoryService;
+import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/categories")
@@ -19,8 +20,15 @@ public class CategoryController {
 	private CategoryService service;
 	
 	@GetMapping
-	public ResponseEntity<List<CategoryDTO>> findAll () {
-		List<CategoryDTO> categories = service.findall();
+	public ResponseEntity<Page<CategoryDTO>> findAll (
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "12") Integer linesPerPage,
+			@RequestParam(defaultValue = "ASC") String orderDirection,
+			@RequestParam(defaultValue = "name") String orderBy
+	) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(orderDirection), orderBy);
+
+		Page<CategoryDTO> categories = service.findAllPaged(pageRequest);
 		return ResponseEntity.ok().body(categories);
 	}
 	
